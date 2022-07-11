@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
+
 /**
  * isHelper
  * --------------------------------------------------------
@@ -8,47 +9,46 @@
  * @license https://opensource.org/licenses/MIT	(MIT License)
  * @filesource
  */
-
 final class isHelper
 {
     protected static $validUrlPrefixes = array('http://', 'https://', 'ftp://'); // Array with url prefixes
 
-    public static function isNumeric($value) : bool
+    public static function isNumeric($value): bool
     {
         return is_numeric($value);
     }
 
-    public static function isArray($value) : bool
+    public static function isArray($value): bool
     {
         return is_array($value);
     }
 
-    public static function isInteger($value) : bool
+    public static function isInteger($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_INT);
     }
 
-    public static function isAlpha($value) : bool
+    public static function isAlpha($value): bool
     {
         return preg_match('/^([a-z])+$/i', $value);
     }
 
-    public static function isAlphaNum($value) : bool
+    public static function isAlphaNum($value): bool
     {
         return preg_match('/^([a-z0-9])+$/i', $value);
     }
 
-    public static function isFloat($value) : bool
+    public static function isFloat($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_FLOAT);
     }
 
-    public static function isBool($value) : bool
+    public static function isBool($value): bool
     {
         return is_bool(filter_var($value, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE));
     }
 
-    public static function isURL($value) : bool
+    public static function isURL($value): bool
     {
         foreach (self::$validUrlPrefixes as $prefix) {
             if (strpos($value, $prefix) !== false) {
@@ -58,7 +58,7 @@ final class isHelper
         return false;
     }
 
-    public static function isURLActive($value) : bool
+    public static function isURLActive($value): bool
     {
         foreach (self::$validUrlPrefixes as $prefix) {
             if (strpos($value, $prefix) !== false) {
@@ -69,17 +69,17 @@ final class isHelper
         return false;
     }
 
-    public static function isURI($value) : bool
+    public static function isURI($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => "/^[A-Za-z0-9-\/_]+$/")));
     }
 
-    public static function isEmail($value) : bool
+    public static function isEmail($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_EMAIL);
     }
 
-    public static function isEmailDNS($value) : bool
+    public static function isEmailDNS($value): bool
     {
         if (self::IsEmail($value)) {
             $domain = ltrim(stristr($value, '@'), '@') . '.';
@@ -91,22 +91,22 @@ final class isHelper
         return false;
     }
 
-    public static function isIP($value) : bool
+    public static function isIP($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_IP);
     }
 
-    public static function isIPv4($value) : bool
+    public static function isIPv4($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4);
     }
 
-    public static function isIPv6($value) : bool
+    public static function isIPv6($value): bool
     {
         return filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV6);
     }
 
-    public static function isASCII($value) : bool
+    public static function isASCII($value): bool
     {
         if (function_exists('mb_detect_encoding')) {
             return mb_detect_encoding($value, 'ASCII', true);
@@ -114,7 +114,7 @@ final class isHelper
         return preg_match('/[^\x00-\x7F]/', $value) === 0;
     }
 
-    public static function isContainsUnique($value) : bool
+    public static function isContainsUnique($value): bool
     {
         if (!is_array($value)) {
             return false;
@@ -122,7 +122,7 @@ final class isHelper
         return $value === array_unique($value, \SORT_REGULAR);
     }
 
-    public static function isSlug($value) : bool
+    public static function isSlug($value): bool
     {
         if (is_array($value)) {
             return false;
@@ -130,7 +130,7 @@ final class isHelper
         return preg_match('/^([-a-z0-9_-])+$/i', $value);
     }
 
-    public static function isDate($value) : bool
+    public static function isDate($value): bool
     {
         $result = false;
         if ($value instanceof \DateTime) {
@@ -141,8 +141,17 @@ final class isHelper
         return $result;
     }
 
-    public static function isAjax() : bool
+    public static function isAjax(): bool
     {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+    }
+
+    public static function isPHP(string $value): bool
+    {
+        static $_is_php;
+        if (!isset($_is_php[$value])) {
+            $_is_php[$value] = version_compare(PHP_VERSION, $value, '>=');
+        }
+        return $_is_php[$value];
     }
 }
